@@ -3,6 +3,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+The interpreter's scanner
+ */
 public class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
