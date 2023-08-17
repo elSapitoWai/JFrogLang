@@ -1,17 +1,21 @@
 package net.sapo.jfrog;
 
+import java.util.List;
+
 /*
 Evaluates and interprets the expresions
  */
-class Interpreter implements Expr.Visitor<Object> {
+class Interpreter implements Expr.Visitor<Object>,
+                             Stmt.Visitor<Void>{
 
     /*
     Starts the interpreting
      */
-    void interpret(Expr expression) {
+    void interpret(List<Stmt> statements) {
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
         } catch (RuntimeError error) {
             FrogLang.runtimeError(error);
         }
@@ -94,6 +98,26 @@ class Interpreter implements Expr.Visitor<Object> {
      */
     private Object evaluate(Expr expr) {
         return expr.accept(this);
+    }
+
+    /*
+    Executes an statement
+     */
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
     }
 
     /*

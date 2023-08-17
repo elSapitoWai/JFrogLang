@@ -1,6 +1,9 @@
 package net.sapo.jfrog;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static net.sapo.jfrog.TokenType.*;
 
 /*
 Given a list of tokens creates a valid syntactic tree.
@@ -17,12 +20,40 @@ class Parser {
     /*
     Starts the parse of the tokens
      */
-    Expr parse() {
-        try {
-            return expression();
-        } catch (ParseError error) {
-            return null;
+    List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()) {
+            statements.add(statement());
         }
+
+        return statements;
+    }
+
+    /*
+    Parses to check for statements
+     */
+    private Stmt statement() {
+        if (match(PRINT)) return printStatement();
+
+        return expressionStatement();
+    }
+
+    /*
+    Runs when a print statement is found
+     */
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+
+    /*
+    Runs when a statement expression in found
+     */
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Expression(expr);
     }
 
     /*
@@ -129,7 +160,7 @@ class Parser {
     /*
     Throws an error of a token type
 
-    type: net.sapo.jfrog.Token type
+    type: token type
     message: error message
      */
     private Token consume(TokenType type, String message) {
