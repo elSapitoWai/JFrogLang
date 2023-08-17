@@ -1,3 +1,5 @@
+package net.sapo.jfrog;
+
 import java.util.List;
 
 /*
@@ -127,7 +129,7 @@ class Parser {
     /*
     Throws an error of a token type
 
-    type: Token type
+    type: net.sapo.jfrog.Token type
     message: error message
      */
     private Token consume(TokenType type, String message) {

@@ -1,3 +1,5 @@
+package net.sapo.jfrog;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +9,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class FrogLang {
+    private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
+    static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -32,6 +36,7 @@ public class FrogLang {
 
         // Indicate an error in the exit code
         if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
     }
 
     /*
@@ -65,7 +70,7 @@ public class FrogLang {
         // Stop if there was a syntax error.
         if (hadError) return;
 
-        System.out.println(new AstPrinter().print(expression));
+        interpreter.interpret(expression);
     }
 
     /*
@@ -90,6 +95,17 @@ public class FrogLang {
     }
 
     /*
+    Reports a runtime error to the console
+
+    error: the error to report
+     */
+    static void runtimeError(RuntimeError error) {
+        System.err.println(error.getMessage() +
+                "\n[line " + error.token.line + "]");
+        hadRuntimeError = true;
+    }
+
+    /*
     Sends the error to the console and sets hadError to true
 
     line: the line in which the error was found
@@ -97,9 +113,7 @@ public class FrogLang {
     where: where the error is found
      */
     private static void report(int line, String where, String message) {
-        System.err.println("[line " + line + "] Error" + where + ": " + message);
+        System.err.println("[line " + line + "] net.sapo.jfrog.Error" + where + ": " + message);
         hadError = true;
     }
-
-
 }

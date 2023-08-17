@@ -1,3 +1,5 @@
+package net.sapo.jfrog;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

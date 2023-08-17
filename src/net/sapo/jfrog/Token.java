@@ -1,3 +1,5 @@
+package net.sapo.jfrog;
+
 public class Token {
     final TokenType type;
     final String lexeme;
