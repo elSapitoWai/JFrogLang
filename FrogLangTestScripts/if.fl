@@ -1,0 +1,14 @@
+var a = 2;
+var b = 2;
+
+if (a == b)
+{
+ print "A is equal to b";
+}
+
+var c = true;
+var d = false;
+
+if (c or d) {
+    print "One is true!";
+}
