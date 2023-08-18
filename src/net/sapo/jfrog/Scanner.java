@@ -232,7 +232,7 @@ public class Scanner {
     private void identifier() {
         while (isAlphaNumeric(peek())) advance();
 
-        addToken(TokenType.IDENTIFIER);
+        // addToken(TokenType.IDENTIFIER);
 
         String text = source.substring(start, current);
         TokenType type = keywords.get(text);
