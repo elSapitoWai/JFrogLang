@@ -6,7 +6,7 @@ import java.util.List;
 Evaluates and interprets the expresions
  */
 class Interpreter implements Expr.Visitor<Object>,
-                             Stmt.Visitor<Void>{
+                             Stmt.Visitor<Void> {
 
     private Environment environment = new Environment();
 
@@ -36,40 +36,42 @@ class Interpreter implements Expr.Visitor<Object>,
         Object right = evaluate(expr.right);
 
         switch (expr.operator.type) {
-            case BANG_EQUAL: return !isEqual(left, right);
-            case EQUAL_EQUAL: return isEqual(left, right);
+            case BANG_EQUAL:
+                return !isEqual(left, right);
+            case EQUAL_EQUAL:
+                return isEqual(left, right);
             case GREATER:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left > (double)right;
+                return (double) left > (double) right;
             case GREATER_EQUAL:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left >= (double)right;
+                return (double) left >= (double) right;
             case LESS:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left < (double)right;
+                return (double) left < (double) right;
             case LESS_EQUAL:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left <= (double)right;
+                return (double) left <= (double) right;
             case MINUS:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left - (double)right;
+                return (double) left - (double) right;
             case PLUS:
                 if (left instanceof Double && right instanceof Double) {
-                    return (double)left + (double)right;
+                    return (double) left + (double) right;
                 }
 
                 if (left instanceof String && right instanceof String) {
-                    return (String)left + (String)right;
+                    return (String) left + (String) right;
                 }
 
                 // Throws error if operands are not compatible
                 throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left / (double)right;
+                return (double) left / (double) right;
             case STAR:
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left * (double)right;
+                return (double) left * (double) right;
         }
 
         // Unreachable.
@@ -95,7 +97,7 @@ class Interpreter implements Expr.Visitor<Object>,
                 return !isTruthy(right);
             case MINUS:
                 checkNumberOperand(expr.operator, right);
-                return -(double)right;
+                return -(double) right;
         }
 
         // Unreachable.
@@ -114,6 +116,12 @@ class Interpreter implements Expr.Visitor<Object>,
      */
     private void execute(Stmt stmt) {
         stmt.accept(this);
+    }
+
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+        executeBlock(stmt.statements, new Environment(environment));
+        return null;
     }
 
     @Override
@@ -153,7 +161,7 @@ class Interpreter implements Expr.Visitor<Object>,
      */
     private boolean isTruthy(Object object) {
         if (object == null) return false;
-        if (object instanceof Boolean) return (boolean)object;
+        if (object instanceof Boolean) return (boolean) object;
         return true;
     }
 
@@ -208,5 +216,26 @@ class Interpreter implements Expr.Visitor<Object>,
         }
 
         return object.toString();
+    }
+
+    /*
+    Executes the statements of a block
+
+    statements: the list of statements in the block
+    environment: the environment in which the block variables will be saved
+     */
+    void executeBlock(List<Stmt> statements,
+                      Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
+
     }
 }
