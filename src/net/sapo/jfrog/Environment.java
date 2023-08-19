@@ -51,4 +51,37 @@ public class Environment {
     void define(String name, Object value) {
         values.put(name, value);
     }
+
+    /*
+    Gets a variable in a specific distance
+
+    distance: distance to the variable
+    name: name of the varible
+     */
+    Object getAt(int distance, String name) {
+        return ancestor(distance).values.get(name);
+    }
+
+    /*
+    Gets the variable at a distance in a specific environment
+     */
+    Environment ancestor(int distance) {
+        Environment environment = this;
+        for (int i = 0; i < distance; i++) {
+            environment = environment.enclosing;
+        }
+
+        return environment;
+    }
+
+    /*
+    Assigns a variable in a specific place
+
+    distance: where it is assigned
+    name: token with the variable name
+    value: value of the variable
+     */
+    void assignAt(int distance, Token name, Object value) {
+        ancestor(distance).values.put(name.lexeme, value);
+    }
 }
