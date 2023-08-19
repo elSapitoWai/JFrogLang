@@ -187,7 +187,7 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-        FrogFunction function = new FrogFunction(stmt);
+        FrogFunction function = new FrogFunction(stmt, environment);
         environment.define(stmt.name.lexeme, function);
         return null;
     }
