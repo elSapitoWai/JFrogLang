@@ -221,8 +221,9 @@ class Interpreter implements Expr.Visitor<Object>,
     public Void visitClassStmt(Stmt.Class stmt) {
         environment.define(stmt.name.lexeme, null);
         Map<String, FrogFunction> methods = new HashMap<>();
+
         for (Stmt.Function method : stmt.methods) {
-            FrogFunction function = new FrogFunction(method, environment);
+            FrogFunction function = new FrogFunction(method, environment, method.name.lexeme.equals("init"));
             methods.put(method.name.lexeme, function);
         }
 
@@ -239,7 +240,7 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-        FrogFunction function = new FrogFunction(stmt, environment);
+        FrogFunction function = new FrogFunction(stmt, environment, false);
         environment.define(stmt.name.lexeme, function);
         return null;
     }

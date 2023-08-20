@@ -5,10 +5,12 @@ import java.util.List;
 public class FrogFunction implements FrogCallable {
     private final Stmt.Function declaration;
     private final Environment closure;
+    private final boolean isInitializer;
 
-    FrogFunction(Stmt.Function declaration, Environment closure) {
+    FrogFunction(Stmt.Function declaration, Environment closure, boolean isInitializer) {
         this.closure = closure;
         this.declaration = declaration;
+        this.isInitializer = isInitializer;
     }
 
     @Override
@@ -35,12 +37,15 @@ public class FrogFunction implements FrogCallable {
         } catch (Return returnValue) {
             return returnValue.value;
         }
+
+        if (isInitializer) return closure.getAt(0, "this");
+
         return null;
     }
 
     FrogFunction bind(FrogInstance instance) {
         Environment environment = new Environment(closure);
         environment.define("this", instance);
-        return new FrogFunction(declaration, environment);
+        return new FrogFunction(declaration, environment, isInitializer);
     }
 }
