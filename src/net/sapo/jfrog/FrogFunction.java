@@ -37,4 +37,10 @@ public class FrogFunction implements FrogCallable {
         }
         return null;
     }
+
+    FrogFunction bind(FrogInstance instance) {
+        Environment environment = new Environment(closure);
+        environment.define("this", instance);
+        return new FrogFunction(declaration, environment);
+    }
 }
