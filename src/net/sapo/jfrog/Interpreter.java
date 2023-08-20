@@ -129,6 +129,17 @@ class Interpreter implements Expr.Visitor<Object>,
     }
 
     @Override
+    public Object visitGetExpr(Expr.Get expr) {
+        Object object = evaluate(expr.object);
+        if (object instanceof FrogInstance) {
+            return ((FrogInstance) object).get(expr.name);
+        }
+
+        throw new RuntimeError(expr.name,
+                "Only instances have properties.");
+    }
+
+    @Override
     public Object visitGroupingExpr(Expr.Grouping expr) {
         return evaluate(expr.expression);
     }
@@ -149,6 +160,20 @@ class Interpreter implements Expr.Visitor<Object>,
         }
 
         return evaluate(expr.right);
+    }
+
+    @Override
+    public Object visitSetExpr(Expr.Set expr) {
+        Object object = evaluate(expr.object);
+
+        if (!(object instanceof FrogInstance)) {
+            throw new RuntimeError(expr.name,
+                    "Only instances have fields.");
+        }
+
+        Object value = evaluate(expr.value);
+        ((FrogInstance)object).set(expr.name, value);
+        return value;
     }
 
     @Override
