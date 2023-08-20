@@ -215,7 +215,13 @@ class Interpreter implements Expr.Visitor<Object>,
     @Override
     public Void visitClassStmt(Stmt.Class stmt) {
         environment.define(stmt.name.lexeme, null);
-        FrogClass klass = new FrogClass(stmt.name.lexeme);
+        Map<String, FrogFunction> methods = new HashMap<>();
+        for (Stmt.Function method : stmt.methods) {
+            FrogFunction function = new FrogFunction(method, environment);
+            methods.put(method.name.lexeme, function);
+        }
+
+        FrogClass klass = new FrogClass(stmt.name.lexeme, methods);
         environment.assign(stmt.name, klass);
         return null;
     }
