@@ -5,10 +5,12 @@ import java.util.Map;
 
 public class FrogClass implements FrogCallable {
     final String name;
+    final FrogClass superclass;
     private final Map<String, FrogFunction> methods;
 
-    FrogClass(String name, Map<String, FrogFunction> methods) {
+    FrogClass(String name, FrogClass superclass, Map<String, FrogFunction> methods) {
         this.name = name;
+        this.superclass = superclass;
         this.methods = methods;
     }
 

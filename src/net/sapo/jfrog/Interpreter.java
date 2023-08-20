@@ -219,6 +219,15 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Void visitClassStmt(Stmt.Class stmt) {
+        Object superclass = null;
+        if (stmt.superclass != null) {
+            superclass = evaluate(stmt.superclass);
+            if (!(superclass instanceof FrogClass)) {
+                throw new RuntimeError(stmt.superclass.name,
+                        "Superclass must be a class.");
+            }
+        }
+
         environment.define(stmt.name.lexeme, null);
         Map<String, FrogFunction> methods = new HashMap<>();
 
@@ -227,7 +236,7 @@ class Interpreter implements Expr.Visitor<Object>,
             methods.put(method.name.lexeme, function);
         }
 
-        FrogClass klass = new FrogClass(stmt.name.lexeme, methods);
+        FrogClass klass = new FrogClass(stmt.name.lexeme, (FrogClass) superclass, methods);
         environment.assign(stmt.name, klass);
         return null;
     }
